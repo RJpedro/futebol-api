@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\EndOfTheMatch;
 use App\Models\Championship;
 use App\Models\ChampionshipMatchs;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class UpdateChampionshipTable
 {
@@ -38,8 +36,8 @@ class UpdateChampionshipTable
             }
 
             // getting informations from both teams
-            $championship_away_team = Championship::where('team_id', $championship_match->away_team_id);
-            $championship_home_team = Championship::where('team_id', $championship_match->home_team_id);
+            $championship_away_team = Championship::where('team_id', $championship_match->away_team_id)->first();
+            $championship_home_team = Championship::where('team_id', $championship_match->home_team_id)->first();
 
             // prepare data to updated the championship table
             $away_team_data = [
@@ -59,11 +57,9 @@ class UpdateChampionshipTable
             $championship_away_team->update($away_team_data);
             $championship_home_team->update($home_team_data);
 
-            dd($championship_away_team->refresh());
-
             return 'Job Executado com Sucesso';
         } catch (\Throwable $th) {
-            return 'Job Falhou com Sucesso'. $th->getLine() . ' - ' . $th->getMessage();
+            return 'Job Falhou '. $th->getLine() . ' - ' . $th->getMessage();
         }
     }
 }

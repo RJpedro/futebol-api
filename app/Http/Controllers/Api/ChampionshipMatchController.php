@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Championship;
 use App\Models\ChampionshipMatchs;
 use App\Models\Team;
 use Illuminate\Http\Request;
