@@ -26,19 +26,21 @@ Tendo presuposto que você já possui o php da versão mais recente instalada em
   composer install
 ```
 
-5 - Clone o arquivo .env.example da raiz do sistema e o renomeie para .env
+5 - Clone o arquivo .env.example da raiz do sistema, o renomeie para .env e edite as variáveis de conexão com banco de dados.
 
-6 - Execute a migrate com o artisan para que as tabelas necessárias para o funcionamento do projeto sejam criadas
+6 - Antes de executar a migrate será necessário criar o banco que irá armazenar as tabelas
+
+7 - Execute a migrate com o artisan para que as tabelas necessárias para o funcionamento do projeto sejam criadas
 ```bash
   php artisan migrate
 ```
  
-7 - Este comando gera a chave de aplicação necessária para a segurança da sua aplicação Laravel
+8 - Este comando gera a chave de aplicação necessária para a segurança da sua aplicação Laravel
 ```bash
   php artisan key:generate
 ```
 
-8 - Inicie o projeto com o artisan
+9 - Inicie o projeto com o artisan
 ```bash
   php artisan serve
 ```
