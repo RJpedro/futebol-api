@@ -21,7 +21,8 @@ class ChampionshipMatchs extends Model
         'away_team_id',
         'home_team_id',
         'away_team_goals',
-        'home_team_goals'
+        'home_team_goals',
+        'is_ended'
     ];
 
     /**
@@ -37,5 +38,6 @@ class ChampionshipMatchs extends Model
         'home_team_id' => 'integer',
         'away_team_goals' => 'integer',
         'home_team_goals' => 'integer',
+        'is_ended' => 'boolean'
     ];
 }

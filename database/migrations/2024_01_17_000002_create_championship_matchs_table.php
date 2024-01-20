@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreign('home_team_id')->references('id')->on('teams');
             $table->integer('away_team_goals')->default(0);
             $table->integer('home_team_goals')->default(0);
+            $table->boolean('is_ended')->default(false);
             $table->timestamps();
         });
     }

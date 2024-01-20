@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\EndOfTheMatch;
 use App\Http\Controllers\Controller;
 use App\Models\Championship;
 use App\Models\ChampionshipMatchs;
@@ -34,10 +35,11 @@ class ChampionshipMatchController extends Controller
         // Validation
         if(is_null(Team::find($request->away_team_id))) return response()->json(['message' => 'Away team not found'], 404);
         if(is_null(Team::find($request->home_team_id))) return response()->json(['message' => 'Home team not found'], 404);
+        if($request->home_team_id == $request->away_team_id)return response()->json(['message' => 'Home team and away team cannot be the same'], 404);
 
         // Try to create the match in championship
         try {
-            $match_championship = ChampionshipMatchs::create($request->only(['date', 'start_time', 'end_time', 'away_team_id', 'home_team_id']));
+            $match_championship = ChampionshipMatchs::create($request->only(['date', 'start_time', 'away_team_id', 'home_team_id']));
             return response()->json([
                 'message' => 'Match in Championship successfully',
                 'data' => $match_championship,
@@ -84,6 +86,9 @@ class ChampionshipMatchController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // set default timezone to get hour correctly
+        date_default_timezone_set('America/Sao_Paulo');
+
         // Validation
         if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
 
@@ -95,7 +100,20 @@ class ChampionshipMatchController extends Controller
                 'data' => $match_championship,
             ], 404);
 
-            $match_championship->update($request->only(['away_team_goals', 'home_team_goals']));
+            if ($match_championship->is_ended) return response()->json([
+                'message' => 'This Match was already ended',
+                'data' => $match_championship,
+            ], 400);
+
+            $match_championship_data = $request->only(['away_team_goals', 'home_team_goals', 'is_ended']);
+
+            if (isset($request->only(['is_ended'])) && $request->only(['is_ended'])) {
+                $match_championship_data['end_time'] = date('H:i:s');
+                // Dispatch Event To Updated Championship Table
+                new EndOfTheMatch($id);
+            };
+
+            $match_championship->update($match_championship_data);
             
             return response()->json([
                 'message' => 'Match in Championship updated successfully',
