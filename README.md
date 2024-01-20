@@ -137,4 +137,12 @@ Com isso será possível cadastrar a partida entretanto assim que a mesma for fi
 }
 ```
 
-Dessa forma será contabilizado corretamente na tabela do campeonato os pontos de cada time, assim comos os gols feitos.
+Dessa forma será contabilizado corretamente na tabela do campeonato os pontos de cada time, assim comos os gols feitos (Vale ressaltar que depois que um jogo é finalizado não é mais possível alterar qualquer dado que seja).
+
+#### Verificando a Tabela Campeonato
+
+Agora que você já entendeu como funciona o fluxo de cadastro nessa Api, sugiro fazer uma requisição para saber como ficou a tabela no final do seu campeonato. 
+
+```http
+  GET /api/v1/championship
+```

@@ -19,11 +19,12 @@ class UpdateChampionshipTable
     /**
      * Handle the event.
      */
-    public function handle(EndOfTheMatch $event)
+    public function handle(EndOfTheMatch $event): void
     {
-        try {
+        try { 
             // getting info about the match
-            $championship_match = ChampionshipMatchs::find($event);
+            $championship_match = ChampionshipMatchs::find($event->championship_match_id);
+           
             $away_team_goals = $championship_match->away_team_goals;
             $home_team_goals = $championship_match->home_team_goals;
 
@@ -57,9 +58,9 @@ class UpdateChampionshipTable
             $championship_away_team->update($away_team_data);
             $championship_home_team->update($home_team_data);
 
-            return 'Job Executado com Sucesso';
+            return;
         } catch (\Throwable $th) {
-            return 'Job Falhou '. $th->getLine() . ' - ' . $th->getMessage();
+            throw 'Event error: '. $th->getLine() . ' - ' . $th->getMessage();
         }
     }
 }
