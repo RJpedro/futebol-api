@@ -4,7 +4,7 @@ Este é um projeto feito em Laravel que ajudará com gerenciamento de campeonato
 
 ## Iniciando o Projeto
 
-Tendo presuposto que você já possui o php da versão mais recente instalada em sua máquina junto com as extensões necessárias (curl, xml), o mysql e git instalado, basta seguir os seguintes comandos: 
+Tendo presuposto que você já possui o php na versão 8.1.2 instalada em sua máquina junto com as extensões necessárias (curl, xml, mysql), o mysql e git instalado, basta seguir os seguintes comandos: 
 
 1 - Clonar o projeto
 ```bash
