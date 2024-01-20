@@ -54,7 +54,7 @@ class UpdateChampionshipTable
                 'points' => ($championship_home_team->points + $home_team_points),
                 'number_of_goals' => ($home_team_goals + $championship_home_team->number_of_goals),
                 'number_of_victories' => ($home_team_victories + $championship_home_team->number_of_victories),
-                'number_of_defeats'   => ($home_team_defeats + $championship_away_team->number_of_defeats),
+                'number_of_defeats'   => ($home_team_defeats + $championship_home_team->number_of_defeats),
             ];
 
             // update the championship table

@@ -107,13 +107,12 @@ class ChampionshipMatchController extends Controller
 
             $match_championship_data = $request->only(['away_team_goals', 'home_team_goals', 'is_ended']);
 
-            if ($request->only(['is_ended'])) {
-                $match_championship_data['end_time'] = date('H:i:s');
-                // Dispatch Event To Updated Championship Table
-                EndOfTheMatch::dispatch($id);
-            };
-
+            if ($request->only(['is_ended'])) $match_championship_data['end_time'] = date('H:i:s');
+            
             $match_championship->update($match_championship_data);
+
+            // Dispatch Event To Updated Championship Table
+            if ($request->only(['is_ended'])) EndOfTheMatch::dispatch($id);
             
             return response()->json([
                 'message' => 'Match in Championship updated successfully',
