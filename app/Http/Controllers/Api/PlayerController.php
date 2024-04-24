@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PlayerController extends Controller
 {
@@ -21,7 +22,7 @@ class PlayerController extends Controller
     public function index()
     {
         // List all players
-        return response()->json(Player::all(), 200);
+        return $this->return_pattern(Player::all(), 'Successfully recovering players.', 200);
     }
 
     /**
@@ -31,17 +32,22 @@ class PlayerController extends Controller
     {
         // Try to create the player
         try {
+            $request->validate([
+                'name' => 'required|string|max:150',
+                'number' => [
+                    'required',
+                    'integer',
+                    Rule::unique('players')->where(function ($query) use ($request) {
+                        return $query->where('team_id', $request->team_id);
+                    })
+                ],
+                'team_id' => 'required|exists:teams,id',
+            ]);
             $player = Player::create($request->only(['name', 'number', 'team_id']));
-            return response()->json([
-                'message' => 'Player created successfully',
-                'data' => $player,
-            ], 201);
+            return $this->return_pattern($player, 'Player created successfully.', 201);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error creating player',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error creating player. Error - $message.", 400);
         }
     }
 
@@ -50,26 +56,17 @@ class PlayerController extends Controller
      */
     public function show(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to find the player
         try {
             $player = Player::find($id);
-            if (is_null($player)) return response()->json([
-                'message' => 'Player not founded',
-                'data' => $player,
-            ], 404);
+            if (is_null($player)) return $this->return_pattern($player, 'Player not founded.', 404);
 
-            return response()->json([
-                'message' => 'Player founded successfully',
-                'data' => $player,
-            ], 200);
+            return $this->return_pattern($player, 'Player founded successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error finding player',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error finding player. Error - $message.", 400);
         }
     }
 
@@ -78,27 +75,18 @@ class PlayerController extends Controller
      */
     public function update(Request $request, string $id)
     {  
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to updated the player
         try {
             $player = Player::find($id);
-            if (is_null($player)) return response()->json([
-                'message' => 'Player not founded',
-                'data' => $player,
-            ], 404);
+            if (is_null($player)) return $this->return_pattern($player, 'Player not founded.', 404);
 
             $player->update($request->only(['name', 'number', 'team_id']));
-            return response()->json([
-                'message' => 'Player updated successfully',
-                'data' => $player->refresh(),
-            ], 200);
+            return $this->return_pattern($player->refresh(), 'Player updated successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error updating player',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error updating player. Error - $message.", 400);
         }
     }
 
@@ -107,24 +95,18 @@ class PlayerController extends Controller
      */
     public function destroy(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to delete the player
         try {
             $player = Player::find($id);
-            if (is_null($player)) return response()->json([
-                'message' => 'Player not founded',
-                'data' => $player,
-            ], 404);
+            if (is_null($player)) return $this->return_pattern($player, 'Player not founded.', 404);
             
             $player->delete();
-            return response()->json(['message' => 'Player deleted successfully'], 200);
+            return $this->return_pattern($player, 'Player deleted successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error deleting player',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error deleting player. Error - $message.", 400);
         }
     }
 }

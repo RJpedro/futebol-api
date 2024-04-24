@@ -21,7 +21,7 @@ class ChampionshipController extends Controller
     public function index()
     {
         // List all info in championship
-        return response()->json(Championship::all(), 200);
+        return $this->return_pattern(Championship::all(), 'Successfully recovering championship.', 200);
     }
 
     /**
@@ -32,16 +32,10 @@ class ChampionshipController extends Controller
         // Try to create the player
         try {
             $championship = Championship::create($request->only(['team_id']));
-            return response()->json([
-                'message' => 'Championship created successfully',
-                'data' => $championship,
-            ], 201);
+            return $this->return_pattern($championship, 'Championship created successfully.', 201);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error creating Championship',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error creating Championship. Error - $message.", 400);
         }
     }
 
@@ -50,26 +44,17 @@ class ChampionshipController extends Controller
      */
     public function show(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to find the championship
         try {
             $championship = Championship::find($id);
-            if (is_null($championship)) return response()->json([
-                'message' => 'Championship not founded',
-                'data' => $championship,
-            ], 404);
+            if (is_null($championship)) return $this->return_pattern($championship, 'Championship not founded.', 404);
             
-            return response()->json([
-                'message' => 'Championship founded successfully',
-                'data' => $championship,
-            ], 200);
+            return $this->return_pattern($championship, 'Championship founded successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error finding Championship',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error finding Championship. Error - $message.", 400);
         }
     }
 
@@ -78,27 +63,18 @@ class ChampionshipController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to updated the championship
         try {
             $championship = Championship::find($id);
-            if (is_null($championship)) return response()->json([
-                'message' => 'Championship not founded',
-                'data' => $championship,
-            ], 404);
+            if (is_null($championship)) return $this->return_pattern($championship, 'Championship not founded.', 404);
 
             $championship->update($request->only(['team_id', 'points', 'number_of_goals', 'number_of_victories', 'number_of_defeats']));
-            return response()->json([
-                'message' => 'Championship updated successfully',
-                'data' => $championship->refresh(),
-            ], 201);
+            return $this->return_pattern($championship->refresh(), 'Championship updated successfully.', 201);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error updating championship',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error updating Championship. Error - $message.", 400);
         }
     }
 
@@ -107,24 +83,18 @@ class ChampionshipController extends Controller
      */
     public function destroy(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to delete the match
         try {
             $championship = Championship::find($id);
-            if (is_null($championship)) return response()->json([
-                'message' => 'Championship not founded',
-                'data' => $championship,
-            ], 404);
+            if (is_null($championship)) return $this->return_pattern($championship, 'Championship not founded.', 404);
 
             $championship->delete();
-            return response()->json(['message' => 'Championship deleted successfully'], 200);
+            return $this->return_pattern($championship, 'Championship deleted successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error deleting Championship',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error deleting Championship. Error - $message.", 400);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Championship;
+use App\Models\ChampionshipMatchs;
 use App\Models\Team;
 
 class TeamObserver
@@ -29,6 +30,11 @@ class TeamObserver
      */
     public function deleted(Team $team): void
     {
+        // Removal of league matches involving the removed team
+        ChampionshipMatchs::where('away_team_id', $team->id)
+        ->orWhere('home_team_id', $team->id)
+        ->delete();
+
         // Delete team in championship
         Championship::find($team->id)->delete();
     }

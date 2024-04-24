@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('championships', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('team_id');
-            $table->foreign('team_id')->references('id')->on('teams');
+            $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
             $table->integer('points')->default(0);
             $table->integer('number_of_goals')->default(0);
             $table->integer('number_of_victories')->default(0);

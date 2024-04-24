@@ -21,7 +21,7 @@ class TeamController extends Controller
     public function index()
     {
         // List all teams
-        return response()->json(Team::all(), 200);
+        return $this->return_pattern(Team::all(), 'Successfully recovering teams.', 200);
     }
 
     /**
@@ -37,16 +37,10 @@ class TeamController extends Controller
                     ['players_list' => json_encode([])]
                 )
             );
-            return response()->json([
-                'message' => 'Team created successfully',
-                'data' => $team,
-            ], 201);
+            return $this->return_pattern($team, 'Team created successfully.', 201);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error creating team',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error creating user. Error - $message.", 400);
         }
     }
 
@@ -55,27 +49,18 @@ class TeamController extends Controller
      */
     public function show(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to find the team
         try {
             $team = Team::find($id);
 
-            if (is_null($team)) return response()->json([
-                'message' => 'Team not founded',
-                'data' => $team,
-            ], 404);
+            if (is_null($team)) return $this->return_pattern($team, 'Team not founded.', 404);
 
-            return response()->json([
-                'message' => 'Team founded successfully',
-                'data' => $team,
-            ], 200);
+            return $this->return_pattern($team, 'Team founded successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error finding team',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error finding team. Error - $message.", 400);
         }
     }
 
@@ -84,27 +69,18 @@ class TeamController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to updated the team
         try {
             $team = Team::find($id);
-            if (is_null($team)) return response()->json([
-                'message' => 'Team not founded',
-                'data' => $team,
-            ], 404);
+            if (is_null($team)) return $this->return_pattern($team, 'Team not founded.', 404); 
 
             $team->update($request);
-            return response()->json([
-                'message' => 'Team updated successfully',
-                'data' => $team->refresh(),
-            ], 200);
+            return $this->return_pattern($team->refresh(), 'Team updated successfully.', 200); 
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error updating team',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error updating team. Error - $message.", 400);
         }
     }
 
@@ -113,24 +89,18 @@ class TeamController extends Controller
      */
     public function destroy(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to delete the team
         try {
             $team = Team::find($id);
-            if (is_null($team)) return response()->json([
-                'message' => 'Team not founded',
-                'data' => $team,
-            ], 404);
+            if (is_null($team)) return $this->return_pattern($team, 'Team not founded.', 404); 
 
             $team->delete();
-            return response()->json(['message' => 'Team deleted successfully'], 200);
+            return $this->return_pattern($team, 'Team deleted successfully.', 200); 
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error deleting team',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error deleting team. Error - $message.", 400);
         }
     }
 }

@@ -10,12 +10,11 @@ class AuthController extends Controller
     public static function login(Request $request) 
     {
         if (Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'message' => 'Authorized',
+            return Controller::return_pattern([
                 'token' => Auth::user()->createToken('authToken')->plainTextToken
-            ], 200);
+            ], 'Authorized.', 200);
         }
 
-        return response()->json(['message' => 'Not Authorized'], 401);
+        return Controller::return_pattern([], 'Unauthorized.', 401);
     }
 }

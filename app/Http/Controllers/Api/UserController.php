@@ -14,7 +14,7 @@ class UserController extends Controller
     public function index()
     {
         // List all users
-        return response()->json(User::all(), 200);
+        return $this->return_pattern(User::all(), 'Successfully recovering users.', 200);
     }
 
     /**
@@ -25,16 +25,10 @@ class UserController extends Controller
         // Try to create the user
         try {
             $user = User::create($request->only(['name', 'email', 'password']));
-            return response()->json([
-                'message' => 'User created successfully',
-                'data' => $user,
-            ], 201);
+            return $this->return_pattern($user, 'User created successfully.', 201);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error creating user',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error creating user. Error - $message.", 400);
         }
     }
 
@@ -43,27 +37,18 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID', 404);
 
         // Try to find the user
         try {
             $user = User::find($id);
 
-            if (is_null($user)) return response()->json([
-                'message' => 'User not founded',
-                'data' => $user,
-            ], 404);
+            if (is_null($user)) return $this->return_pattern($user, 'User not founded', 404);
 
-            return response()->json([
-                'message' => 'User founded successfully',
-                'data' => $user,
-            ], 200);
+            return $this->return_pattern($user, 'User founded successfully', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error finding user',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error finding user. Error - $message.", 400);
         }
     }
 
@@ -72,27 +57,18 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID', 404);
 
         // Try to updated the user
         try {
             $user = User::find($id);
-            if (is_null($user)) return response()->json([
-                'message' => 'User not founded',
-                'data' => $user,
-            ], 404);
+            if (is_null($user)) return $this->return_pattern($user, 'User not founded', 404);
 
             $user->update($request->only(['name', 'email', 'password']));
-            return response()->json([
-                'message' => 'User updated successfully',
-                'data' => $user->refresh(),
-            ], 200);
+            return $this->return_pattern($user->refresh(), 'User updated successfully', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error updating user',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error updating user. Error - $message.", 400);
         }
     }
 
@@ -101,24 +77,18 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        if (!is_numeric($id)) return response()->json(['message' => 'Invalid ID'], 400);
+        if (!is_numeric($id)) return $this->return_pattern([], 'Invalid ID.', 404);
 
         // Try to delete the user
         try {
             $user = User::find($id);
-            if (is_null($user)) return response()->json([
-                'message' => 'User not founded',
-                'data' => $user,
-            ], 404);
+            if (is_null($user)) return $this->return_pattern($user, 'User not founded.', 404);
 
             $user->delete();
-            return response()->json(['message' => 'User deleted successfully'], 200);
+            return $this->return_pattern($user, 'User deleted successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Error deleting user',
-                'line' => $th->getLine(),
-                'error' => $th->getMessage(),
-            ], 400);
+            $message = $th->getMessage();
+            return $this->return_pattern([], "Error deleting user. Error - $message.", 400);
         }
     }
 }
