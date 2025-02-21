@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Observers\PlayerObserver;
+use App\Models\Relations\BelongsToTeam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Player extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        BelongsToTeam;
 
     /**
      * The attributes that are mass assignable.
@@ -30,14 +31,5 @@ class Player extends Model
         'name' => 'string',
         'number' => 'integer',
         'team_id' => 'integer',
-    ];
-
-    /**
-     * The model observers for your application.
-     *
-     * @var array
-     */
-    protected $observers = [
-        Player::class => [PlayerObserver::class],
     ];
 }

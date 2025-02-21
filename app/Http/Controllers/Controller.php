@@ -10,7 +10,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public static function return_pattern(mixed $data, string $message, int $status)
+    public static function return_default(mixed $data, string $message, int $status)
     {
         return response()->json([
             'data' => $data,

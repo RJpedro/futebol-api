@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Relations\HasManyPlayer;
 use App\Observers\TeamObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        HasManyPlayer;
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +19,6 @@ class Team extends Model
      */
     protected $fillable = [
         'name',
-        'players_list',
     ];
 
     /**
@@ -27,7 +28,6 @@ class Team extends Model
      */
     protected $casts = [
         'name' => 'string',
-        'players_list' => 'json',
     ];
 
 
